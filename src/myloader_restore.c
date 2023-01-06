@@ -192,13 +192,13 @@ int restore_data_from_file(struct thread_data *td, char *database, char *table,
           if (g_strrstr_len(data->str,10,"LOAD DATA ")){
             gchar *from = g_strstr_len(data->str, -1, "'");
             from++;
-            gchar *to = g_strstr_len(from, -1, "'");
+            gchar *to = g_strstr_len(from, -1, "'")+1;
             gchar *fff=g_strndup(from, to-from);
             if (has_compession_extension(fff)){
               gchar *fifo_name=g_strndup(fff,g_strrstr(fff,".")-fff);
               mkfifo(fifo_name,0666);
               g_thread_create((GThreadFunc)send_file_to_fifo, fff, TRUE, NULL);
-              char *start_point = g_strstr_len(to-4,-1,".");
+              char *start_point = g_strstr_len(to-5,-1,".");
               *start_point = '\'';
               for(from=start_point+1; from<to ; from++){
                 *from=' ';
